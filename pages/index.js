@@ -1,15 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useMutation } from "react-query";
-
-const sendChat = async (message) => {
-  const { data } = await axios.post("/api/chat", { prompt: message });
-  return data.response;
-};
+import { v4 as uuidv4 } from "uuid";
 
 export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
+  const [sessionId] = useState(uuidv4());
+
+  const sendChat = async (message) => {
+    const { data } = await axios.post("/api/chat", {
+      prompt: message,
+      sessionId: sessionId,
+    });
+    return data.response;
+  };
+
   const mutation = useMutation(sendChat);
 
   const bottomRef = useRef();
